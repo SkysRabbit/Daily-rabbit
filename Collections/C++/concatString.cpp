@@ -10,7 +10,9 @@ void concatString (char Target[], char Source[]) {
     while (bool(Target[index_tar]) == 1) {
         index_tar++;
     }
+    // to add space of the first string
     Target[index_tar] = ' ';
+    // to avoid the space being overlapped by the first character of second string
     ++index_tar;
     int index_sor = 0;
     while (bool(Source[index_sor]) == 1) {
