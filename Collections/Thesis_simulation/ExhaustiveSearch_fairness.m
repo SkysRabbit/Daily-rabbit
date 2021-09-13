@@ -16,8 +16,6 @@ function [state_ch,res_ch,res_sinr_c,res_sinr_d] = ExhaustiveSearch_fairness(N_d
 state_ch = prev_state_ch;
 state_ch(:,:) = 0;
 
-
-
 % recording results in arrays
 res_ch = zeros(1,N_d2d);
 res_sinr_c = zeros(1,N_d2d);
