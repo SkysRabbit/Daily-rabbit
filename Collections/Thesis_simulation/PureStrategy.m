@@ -52,20 +52,17 @@ while iter <= maxIter % maxIter
     for m=1:N_d2d
         % find the potential channel that maximizes the 
         % utility of each pair 
-        % We have initial utility matrix and initial channel state
-        % cur_state_ch = prev_state_ch;
         % For each iteration
         % Find underlay pairs for each channel
         pot_sinr_d = zeros(1,N_ch);
         pot_sinr_c = zeros(1,N_ch);
         pot_util = zeros(1,N_ch); % record potential utility
-        %unqualified_util = zeros(1,N_ch); % store utility doesn't pass the constraints
         for c=1:N_ch
             inter_dt_BS = 0;
             inter_dt_other_dr = 0;
             % Avoid recalculate interference term
             % We set the current pair's column of prev_state_ch to zero
-            P = find(state_ch(:,m) == 1); % Pair m 使用第幾個channel
+            P = find(state_ch(:,m) == 1); % Pair m accesses which channel
             state_ch(:,m) = 0;
             % Find underlay pairs for each channel
             underlay_pair = [];
@@ -90,8 +87,6 @@ while iter <= maxIter % maxIter
             K = find(underlay_pair == 1);
             if isempty(K) == 0
                 for l=1:length(K) 
-                    % underlay_pair(l) = frequency indicator,
-                    %inter_dt_BS = underlay_pair(K(l)) * rp_dt_bs(K(l),c) + inter_dt_BS;
                     inter_dt_other_dr = underlay_pair(K(l)) * rp_dt_d2d(K(l),N_ch*(K(l)-1)+c) + inter_dt_other_dr;
                 end
             end
@@ -111,33 +106,11 @@ while iter <= maxIter % maxIter
                 %end
                 utility = 0; % Set the utility to zero, no payoff
                 SINR_c = 0; SINR_d = 0;
-                % Set the channel state to zero(Rejected)
-                %prev_state_ch(c,m) = 0; % modified
             end
             pot_util(1,c) = utility;
             pot_sinr_c(1,c) = SINR_c;
             pot_sinr_d(1,c) = SINR_d;
-            %unqualified_util(1,c) = fail_util;
-            % Compare current to original utility
-            % if larger than the origin, replace it
-            % Store qualified utility 
-            % We need to inspect this part carefully!!
-            %prev_utility = init_game_matrix(c,m);
-            %cur_utility = utility;
-            %if cur_utility >= prev_utility
-            %    pot_util(1,c) = cur_utility;
-            %else
-                % If current value is smaller than the previous
-                % In case all utility value are zero
-                %pot_util(1,c) = prev_utility;
-            %    pot_util(1,c) = 0; % modified, no payoff
-            %end
-            % update every information of utility and channel state
-            % Modify original channel's utility(the channel is not occupied by current pair)
             
-            % Current pair: pair m
-            %P = find(prev_state_ch(:,m) == 1); % Pair m 使用第幾個channel
-            % if current pair has selected one specific channel P
             if isempty(P) == 0 % not empty
                 underlay_pair = []; % modified
                 state_ch(P,m) = 0; % set it as 0
@@ -179,24 +152,18 @@ while iter <= maxIter % maxIter
         % choose the best channel of current pair at this iteration
         % in the case all utility value are zero
         if all(pot_util(1,:) == 0)
-            % At least one utility can give a try
-            %[res_util(iter+1,m), res_ch(iter+1,m)] = max(unqualified_util(1,:));
-            %prev_state_ch(res_ch(iter+1,m),m) = 1;
-            %init_game_matrix(res_ch(iter+1,m),m) = res_util(iter+1,m);
             res_ch(iter+1,m) = 0;
             res_util(iter+1,m) = 0;
             res_sinr_c(iter+1,m) = 0;
             res_sinr_d(iter+1,m) = 0;
             % obtain the largest utility but not pass the constraints
-            %res_util(iter+1,m) = init_game_matrix(,m); % stays the same
         else
             [res_util(iter+1,m), res_ch(iter+1, m)] = max(pot_util(1,:));
             res_sinr_c(iter+1,m) = pot_sinr_c(res_ch(iter+1,m));
             res_sinr_d(iter+1,m) = pot_sinr_d(res_ch(iter+1,m));
-            % Update the payoff of each pair
-            %init_game_matrix(res_ch(iter+1,m),m) = res_util(iter+1,m);
             state_ch(res_ch(iter+1,m), m) = 1;
         end 
+        % Update the payoff of each pair
         [init_game_matrix,a,b] = gameMatrix(N_d2d,N_ch,state_ch,rp_cue_bs, rp_dt_d2d, rp_cue_d2d, rp_dt_bs);
     end
     
@@ -205,12 +172,6 @@ while iter <= maxIter % maxIter
     comp_res = (res_ch(iter+1,:) == res_ch(iter,:));
     r = sum(comp_res(:) == 1); 
     count_iter = count_iter + 1;
-    % If all pairs have matched
-    if r == N_d2d
-        % disp("All pairs have matched")
-        %iter = maxIter + 5; 
-        break;
-    end
 end
 
 end
