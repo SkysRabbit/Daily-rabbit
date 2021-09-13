@@ -25,7 +25,7 @@ for m = 1:N_d2d
         inter_dt_other_dr = 0;
         % Avoid recalculate interference term
         % We set the current pair's column of prev_state_ch to zero
-        P = find(state_ch(:,m) == 1); % Pair m 使用第幾個channel (initial subchannel)
+        P = find(state_ch(:,m) == 1); % Find which subchannel pair m initially occepies
         state_ch(:,m) = 0;
         % Find underlay pairs for each channel
         underlay_pair = [];
