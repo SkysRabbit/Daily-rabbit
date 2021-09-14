@@ -39,5 +39,3 @@ if __name__ == '__main__':
     print("The sorted array is ")
     for i in range(len(arr)):
         print(arr[i])
-    
-    
