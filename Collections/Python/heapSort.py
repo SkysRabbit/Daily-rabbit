@@ -1,11 +1,4 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""
-Created on Tue Sep 14 19:58:12 2021
-
-@author: mingchiehhung
-"""
-# Heap sort: root has the maximum value, etc.
+# Heap sort: root has the minimum value, etc.
 # n: array size 
 # i: current position
 def heapify(arr, n, i):
