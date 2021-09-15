@@ -23,7 +23,10 @@ def heapSort(arr):
 # traverse layer 
     for i in range(n//2-1, -1, -1):
         heapify(arr, n, i)
-        
+
+# arr[0] is the largest value in the array, so we swap last value and it
+# the relation between left side and right side is uncertain
+# after swap procedure, redo heapify again (assume arr[0] is the largest value)
     for i in range(n-1, 0, -1):
         arr[i], arr[0] = arr[0], arr[i]
         heapify(arr, i, 0)
